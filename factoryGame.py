@@ -1,9 +1,8 @@
 #Was wir als naechstes machen sollen:
 # tips / tutorial
-#Geld System / transport
-#HUD
-#Machine:
-# - "reload" / druckaufbau (brauchen graphik)
+# Geld System / transport
+
+# Machine:
 # - upgrades (viel spaeter)
 # - vielleicht ein bisschen groesser machen?
 # - nicht an Ecken ueberlappen lassen
@@ -11,7 +10,7 @@
 # hier noch ein Kommentar...
 # different test line
 
-import sys, os
+# import sys, os
 import time
 import random
 
@@ -58,6 +57,7 @@ class Actor(cocos.sprite.Sprite):
 
 
 class ConveyorBelt(Actor):
+
     def load_animation(self, imgage, delay):
         seq = ImageGrid(load(imgage), 4, 1)
         return Animation.from_image_sequence(seq, delay)
@@ -83,6 +83,10 @@ class ConveyorBelt(Actor):
 
 class Machine(Actor):
 
+    def load_animation(self, imgage, delay):
+        seq = ImageGrid(load(imgage), 1, 5)
+        return Animation.from_image_sequence(seq, delay, loop=False)
+
     def __init__(self, x, y, conveyor_direction, delay):
         image = load('img/machine.png')
         self.delay = delay
@@ -92,12 +96,6 @@ class Machine(Actor):
         super(Machine, self).__init__(image, x, y)
         self.x, self.y = self.nearestSpot(x, y)
 
-        if conveyor_direction == 'up' or conveyor_direction == 'down':
-            self.orientation = 'horizontal'
-            self.rotation = 90
-        else:
-            self.orientation = 'vertical'
-            # self.rotation= 0 (default)
 
         # define collision box
         # increase size of collision box to hit sooner when conveyor belt is faster
@@ -107,6 +105,9 @@ class Machine(Actor):
         # define timer for cool down period
         self.lastStamp = time.perf_counter()
         self.cooldown = 2.0
+
+        #starte druck aufbau
+        self.begin_reload()
 
         #so that machines are created in actual spots
     def nearestSpot(self, x, y):
@@ -136,17 +137,27 @@ class Machine(Actor):
         if self.target is not None:
             if not self.target.processed:
                 if (time.perf_counter() > self.lastStamp + self.cooldown):
-                    self.parent.add(Piston(self.x, self.y,self.orientation, self.target, self.delay))
+                    self.parent.add(Piston(self.x, self.y,self.orientation, self.target, self, self.delay))
                     self.target = None
-                    self.lastStamp = time.perf_counter()
-
 
     def collide(self, material):
         if self.can_hit(material):
           self.target = material
           self.stamp()
 
+    def begin_reload(self):
+        self.lastStamp = time.perf_counter()
+        # animation neu starten - ended von alleine
+        animation = self.load_animation('img/machineReload.png', self.cooldown / 4)
 
+        if self.conveyor_direction == 'up' or self.conveyor_direction == 'down':
+            self.orientation = 'horizontal'
+            animation = animation.get_transform(rotate=90)
+        else:
+            self.orientation = 'vertical'
+            # self.rotation= 0 (default)
+
+        self.image = animation
 
 
 class Piston(cocos.sprite.Sprite):
@@ -155,10 +166,11 @@ class Piston(cocos.sprite.Sprite):
         seq = ImageGrid(load(imgage), 1, self.numFrames)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
-    def __init__(self, x, y, orientation, target, delay):
+    def __init__(self, x, y, orientation, target, machine, delay):
         self.delay = delay / 2.38 #using universal delay calculate animation speed accordingly
         self.numFrames = 7
         self.target = target
+        self.machine = machine
         animation = self.load_animation('img/piston.png', self.delay)
 
         # depending on direction, rotate image accordingly
@@ -171,6 +183,7 @@ class Piston(cocos.sprite.Sprite):
 
         self.do(ac.CallFunc(self.target.replace) +
                 ac.Delay(self.numFrames * self.delay) +
+                ac.CallFunc(self.machine.begin_reload) +
                 ac.CallFunc(self.kill))
 
 class Material(Actor):
@@ -384,25 +397,3 @@ if __name__ == '__main__':
 
     scene = cocos.scene.Scene(background, game_layer)
     director.run(scene)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#400 zeilen!
