@@ -11,10 +11,13 @@
 
 # different test line
 
+import sys, os
 import time
+import random
+
 
 from pyglet.image import load, ImageGrid, Animation
-
+import pyglet.resource
 
 import cocos
 from cocos.director import director
@@ -26,7 +29,7 @@ import cocos.euclid as eu
 
 import cocos.collision_model as cm
 
-import random
+
 
 class Background(cocos.layer.Layer):
 
@@ -52,8 +55,8 @@ class Actor(cocos.sprite.Sprite):
         return self._cshape
 
 
-        
-        
+
+
 class ConveyorBelt(Actor):
     def load_animation(self, imgage, delay):
         seq = ImageGrid(load(imgage), 4, 1)
@@ -61,7 +64,7 @@ class ConveyorBelt(Actor):
 
     def __init__(self, x, y, direction, delay):
         animation = self.load_animation('img/conveyorBelt.png', delay)
-        
+
         # depending on direction, rotate image accordingly
         if direction == 'right':
             animation = animation.get_transform(rotate=0)
@@ -77,7 +80,7 @@ class ConveyorBelt(Actor):
 
 
 
-        
+
 class Machine(Actor):
 
     def __init__(self, x, y, conveyor_direction, delay):
@@ -88,7 +91,7 @@ class Machine(Actor):
         # now create actual instance
         super(Machine, self).__init__(image, x, y)
         self.x, self.y = self.nearestSpot(x, y)
-        
+
         if conveyor_direction == 'up' or conveyor_direction == 'down':
             self.orientation = 'horizontal'
             self.rotation = 90
@@ -98,13 +101,13 @@ class Machine(Actor):
 
         # define collision box
         # increase size of collision box to hit sooner when conveyor belt is faster
-        self.cshape.r = 0.25 / self.delay 
-        self.target = None  
+        self.cshape.r = 0.25 / self.delay
+        self.target = None
 
         # define timer for cool down period
         self.lastStamp = time.perf_counter()
         self.cooldown = 2.0
-        
+
         #so that machines are created in actual spots
     def nearestSpot(self, x, y):
         new_x = round((x - 16) / 32) * 32 + 16
@@ -135,7 +138,7 @@ class Machine(Actor):
                 if (time.perf_counter() > self.lastStamp + self.cooldown):
                     self.parent.add(Piston(self.x, self.y,self.orientation, self.target, self.delay))
                     self.target = None
-                    self.lastStamp = time.perf_counter() 
+                    self.lastStamp = time.perf_counter()
 
 
     def collide(self, material):
@@ -161,7 +164,7 @@ class Piston(cocos.sprite.Sprite):
         # depending on direction, rotate image accordingly
         if orientation == 'horizontal':
             animation = animation.get_transform(rotate=90)
-           
+
         # now create actual instance
         pos = eu.Vector2(x, y)
         super(Piston, self).__init__(animation, pos)
@@ -177,7 +180,7 @@ class Material(Actor):
         self.y = y
         self.processed = False
         self.cshape.r = 3
-        self.value = 5 
+        self.value = 5
         self.score = 10
         self.delay = delay
 
@@ -202,7 +205,7 @@ class GameLayer(cocos.layer.Layer):
 
     def __init__(self, levelInfo, hud):
         self.hud = hud
-        
+
         super(GameLayer, self).__init__()
         w, h = cocos.director.director.get_window_size()
         self.width = w
@@ -221,7 +224,7 @@ class GameLayer(cocos.layer.Layer):
         w, h = director.get_window_size()
         cell_size = 32
         self.coll_man = cm.CollisionManagerGrid(0, w, 0, h, cell_size, cell_size)
-        
+
         start = levelInfo.start
         segments = levelInfo.segments
         sign = lambda a: -1 if a < 0 else 1
@@ -239,13 +242,13 @@ class GameLayer(cocos.layer.Layer):
                 # definiere "an der Ecke" als neuen Typ und denke dann logic aus um den Ueberlapp zu verhindern
                 self.create_conveyor_belt((start[0] + step[0] + 0.5) * 32, (start[1] + step [1] + 0.5) * 32, direction, index == 0)
             start = (start[0] + segment[0], start[1] + segment[1])
-            
+
 
         self.elapsedTime = 0
         self.timeStamp = 0
 
         self.schedule(self.game_loop)
-    
+
     @property
     def money(self):
         return self._money
@@ -291,7 +294,7 @@ class GameLayer(cocos.layer.Layer):
             return False
 
     def create_material(self):
-        if self.money >= self.material_cost:  
+        if self.money >= self.material_cost:
             self.money -= self.material_cost
             startPos = self.levelInfo.start
             segments = self.levelInfo.segments
@@ -311,7 +314,7 @@ class GameLayer(cocos.layer.Layer):
         for obj in self.get_children():
             if isinstance(obj, Material):
                 self.coll_man.add(obj)
-        
+
         for machine in self.machines:
             material = next(self.coll_man.iter_colliding(machine), None)
             machine.collide(material)
@@ -343,13 +346,13 @@ class HUD(cocos.layer.Layer):
         w, h = director.get_window_size()
         self.score_text = self._create_text(60, h-40)
         self.score_money = self._create_text(w-20, h-40)
-     
+
     def _create_text(self, x, y):
         text = cocos.text.Label(font_size=18, font_name = 'Oswald', anchor_x='right', anchor_y='center')
         text.position = (x, y)
         self.add(text)
         return text
-        
+
     def update_score(self, score):
         self.score_text.element.text = 'Score: %s' % score
 
@@ -363,11 +366,14 @@ class DefineLevel(object):
         self.segments = [(10, 0), (0, 8), (-3, 0), (0, -3)]
         self.layer = 'TileLayer1'
         self.beltDelay = 0.1 # groesser als 1.5 gibt probleme (ist sowieso zu langsam)
-   
-        
-        
+
+
+
 if __name__ == '__main__':
-   
+
+#    sys.path.append(os.path.abspath('/Users/SMSresults/Dropbox/Personal/Jungs/ScratchAndPythonHenrik/FactorySpiel'))
+    pyglet.resource.path.append('img')
+    pyglet.resource.reindex()
     cocos.director.director.init()
 
     levelInfo = DefineLevel()
