@@ -5,7 +5,6 @@
 # Machine:
 # - upgrades (viel spaeter)
 # - vielleicht ein bisschen groesser machen?
-# - nicht an Ecken ueberlappen lassen
 
 # hier noch ein Kommentar...
 # different test line
@@ -223,7 +222,7 @@ class GameLayer(cocos.layer.Layer):
         w, h = cocos.director.director.get_window_size()
         self.width = w
         self.height = h
-        self.money = self._money = 40
+        self.money = self._money = 99999 #fuer tests viel geld
         self.score = self._score = 0
         self.levelInfo = levelInfo
         self.add(hud)
@@ -253,7 +252,9 @@ class GameLayer(cocos.layer.Layer):
                 # index = 1: erste nach der Ecke
                 # index = len(steps) - 1: letze vor der Ecke
                 # definiere "an der Ecke" als neuen Typ und denke dann logic aus um den Ueberlapp zu verhindern
-                self.create_conveyor_belt((start[0] + step[0] + 0.5) * 32, (start[1] + step [1] + 0.5) * 32, direction, index == 0)
+                self.create_conveyor_belt((start[0] + step[0] + 0.5) * 32,
+                                        (start[1] + step [1] + 0.5) * 32, direction,
+                                        corner = (index == 0 or index == 1 or index == len(steps) - 1) )
             start = (start[0] + segment[0], start[1] + segment[1])
 
 
