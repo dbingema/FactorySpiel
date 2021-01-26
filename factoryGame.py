@@ -6,8 +6,37 @@
 # - upgrades (viel spaeter)
 # - vielleicht ein bisschen groesser machen?
 
-# hier noch ein Kommentar...
-# different test line
+# Extra / Details:
+
+# jedes verkaufte produkt gibt einen Score (Stuhl = 1, Fernseher = 5 ...), zaehlt hoch
+# produkt gibt auch Geld, aber Geld gibt man aus fuer upgrades und up-level/andere Produkte
+# man verliert, wenn man auf 0 Euro gesunken ist und keine Produkte mehr hat zum verkaufen
+# zeitdruck, timer. man darf nicht zu lange warten. 
+#   z.B.: im laufe der zeit bringt das produkt aber immer weniger geld (Anzeigen wie thermometer), 
+#       roh stoff kostet aber immer das gleiche
+# verschidene levels haben ein bestimmten terrain
+
+# Spielverlauf:
+#   - rohstoff lager am anfang des fliessbandes
+#   - durch click fuellt sich lager (z.B. 10 neue rohstoffe), kostet dann geld
+#   - geht aber auch nicht immer, liefer schwierigkeiten oder liefer dauer
+#   - oder es kostet mehr, wenn man es schneller haben will
+#   - roh stoff wird automatisch aus lager auf fliessband geleget, zufaelliger Abstand
+#   - reload delay, rohstoff rate (aufs band) und preise fuer rohstoff und produkt so dass es knapp ist
+#   - wenn genug geld eingenommen, kann man schnellere Maschinen kaufen (upgrades option)
+#   - upgrade ist billiger als neue Maschine
+
+
+# Man kann aber auch auf ein neues level gehen:
+#   - transition effekt
+#   - neuen level (anderes product, schnelleres / andere form fliessband, etc...)
+#   - mehrere Stufen fuer Produkt, verschiedene Farben Rohstoff/Maschinen
+#   - naechstes level selbst entsheiden wenn man genug geld hat
+
+#Ziel:
+#   - gewinnt das letzte level
+#   - oder einfach nur high score bekommen? -- irgenwann verliert man, es wird immer schwieriger/schneller
+
 
 # import sys, os
 import time
@@ -26,7 +55,6 @@ import cocos.sprite
 import cocos.euclid as eu
 
 import cocos.collision_model as cm
-
 
 
 class Background(cocos.layer.Layer):
@@ -53,10 +81,8 @@ class Actor(cocos.sprite.Sprite):
         return self._cshape
 
 
-
-
 class ConveyorBelt(Actor):
-
+  
     def load_animation(self, imgage, delay):
         seq = ImageGrid(load(imgage), 4, 1)
         return Animation.from_image_sequence(seq, delay)
@@ -78,8 +104,6 @@ class ConveyorBelt(Actor):
         super(ConveyorBelt, self).__init__(animation, x, y)
 
 
-
-
 class Machine(Actor):
 
     def load_animation(self, imgage, delay):
@@ -87,10 +111,10 @@ class Machine(Actor):
         return Animation.from_image_sequence(seq, delay, loop=False)
 
     def __init__(self, x, y, conveyor_direction, delay):
-        image = load('img/machine.png')
+        image = load('img/machine.png') 
         self.delay = delay
         self.conveyor_direction = conveyor_direction
-
+        
         # now create actual instance
         super(Machine, self).__init__(image, x, y)
         self.x, self.y = self.nearestSpot(x, y)
@@ -158,6 +182,9 @@ class Machine(Actor):
 
         self.image = animation
 
+    def upgrade(self):
+        pass
+
 
 class Piston(cocos.sprite.Sprite):
 
@@ -185,6 +212,7 @@ class Piston(cocos.sprite.Sprite):
                 ac.CallFunc(self.machine.begin_reload) +
                 ac.CallFunc(self.kill))
 
+
 class Material(Actor):
     def __init__(self, x, y, actions, delay):
         super(Material, self).__init__('img/rawMaterial.png', x, y)
@@ -208,7 +236,6 @@ class Material(Actor):
     def transport(self):
         self.kill()
         # fahrrad kommt zum abholen
-
 
 
 class GameLayer(cocos.layer.Layer):
@@ -252,8 +279,8 @@ class GameLayer(cocos.layer.Layer):
                 # index = 1: erste nach der Ecke
                 # index = len(steps) - 1: letze vor der Ecke
                 # definiere "an der Ecke" als neuen Typ und denke dann logic aus um den Ueberlapp zu verhindern
-                self.create_conveyor_belt((start[0] + step[0] + 0.5) * 32,
-                                        (start[1] + step [1] + 0.5) * 32, direction,
+                self.create_conveyor_belt((start[0] + step[0] + 0.5) * 32, 
+                                        (start[1] + step [1] + 0.5) * 32, direction, 
                                         corner = (index == 0 or index == 1 or index == len(steps) - 1) )
             start = (start[0] + segment[0], start[1] + segment[1])
 
@@ -353,7 +380,6 @@ class GameLayer(cocos.layer.Layer):
         super(GameLayer, self).remove(obj)
 
 
-
 class HUD(cocos.layer.Layer):
     def __init__(self):
         super(HUD, self).__init__()
@@ -377,15 +403,14 @@ class HUD(cocos.layer.Layer):
 class DefineLevel(object):
     def __init__(self):
         self.start = (0, 5)
-        self.segments = [(10, 0), (0, 8), (-3, 0), (0, -3)]
+        self.segments = [(20, 0)]#, (0, 8), (-3, 0), (0, -3)]
         self.layer = 'TileLayer1'
         self.beltDelay = 0.1 # groesser als 1.5 gibt probleme (ist sowieso zu langsam)
 
 
-
 if __name__ == '__main__':
 
-#    sys.path.append(os.path.abspath('/Users/SMSresults/Dropbox/Personal/Jungs/ScratchAndPythonHenrik/FactorySpiel'))
+    #    sys.path.append(os.path.abspath('/Users/SMSresults/Dropbox/Personal/Jungs/ScratchAndPythonHenrik/FactorySpiel'))
     pyglet.resource.path.append('img')
     pyglet.resource.reindex()
     cocos.director.director.init()
