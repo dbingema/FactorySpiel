@@ -45,6 +45,7 @@ import random
 
 from pyglet.image import load, ImageGrid, Animation
 import pyglet.resource
+from pyglet.gl import *
 
 import cocos
 from cocos.director import director
@@ -107,7 +108,7 @@ class ConveyorBelt(Actor):
 class Machine(Actor):
 
     def load_animation(self, imgage, delay):
-        seq = ImageGrid(load(imgage), 1, 5)
+        seq = ImageGrid(load(imgage), 1, 6)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
     def __init__(self, x, y, conveyor_direction, delay):
@@ -128,8 +129,11 @@ class Machine(Actor):
         # define timer for cool down period
         self.lastStamp = time.perf_counter()
         self.cooldown = 2.0
+        self.upgrade_cost = 10
+        self.upgrade_level = 0
 
         #starte druck aufbau
+        self.reload_animation = None
         self.begin_reload()
 
         #so that machines are created in actual spots
@@ -169,9 +173,11 @@ class Machine(Actor):
           self.stamp()
 
     def begin_reload(self):
+        if self.reload_animation is not None:
+            self.remove(self.reload_animation)
         self.lastStamp = time.perf_counter()
         # animation neu starten - ended von alleine
-        animation = self.load_animation('img/machineReload.png', self.cooldown / 4)
+        animation = self.load_animation('img/machineReload.png', self.cooldown / 5)
 
         if self.conveyor_direction == 'up' or self.conveyor_direction == 'down':
             self.orientation = 'horizontal'
@@ -179,11 +185,24 @@ class Machine(Actor):
         else:
             self.orientation = 'vertical'
             # self.rotation= 0 (default)
-
-        self.image = animation
+            
+        # punkte oben drauf legen
+        self.reload_animation = cocos.sprite.Sprite(animation)
+        self.add(self.reload_animation)
 
     def upgrade(self):
-        pass
+        if self.upgrade_level == 0:
+            # noch kein upgrade bislang
+            self.cooldown = 1.0
+            self.upgrade_level = 1
+            # BIld wechseln!
+            self.image = load('img/machine_upgrade.png')
+            return True
+        else:
+            # bei max level - nix tun
+            return False
+
+         
 
 
 class Piston(cocos.sprite.Sprite):
@@ -299,6 +318,15 @@ class GameLayer(cocos.layer.Layer):
         self._money = val
         self.hud.update_money(val)
 
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, val):
+        self._score = val
+        self.hud.update_score(val)
+
     def coords_within(self, x, y, rect):
         x1 = rect[0]
         y1 = rect[1]
@@ -368,10 +396,19 @@ class GameLayer(cocos.layer.Layer):
                 self.timeStamp = self.elapsedTime
 
     def on_mouse_press(self, x, y, buttons, mod):
+        # upgrade?
+        for machine in self.machines:
+            if machine.contains(x, y) and self.money >= machine.upgrade_cost:
+                if machine.upgrade():
+                    self.money -= machine.upgrade_cost
+                    
+        # neue Maschine?
         for conveyorInfo in self.conveyorSpots:
             if self.coords_within(x, y, conveyorInfo['Corners']):
                 if self.create_machine(x, y, conveyorInfo['Direction'], self.levelInfo.beltDelay):
                     self.conveyorSpots.remove(conveyorInfo) #no longer valid spot
+        
+            
 
     def remove(self, obj):
         if isinstance(obj, Material) and obj.processed:
@@ -384,21 +421,24 @@ class HUD(cocos.layer.Layer):
     def __init__(self):
         super(HUD, self).__init__()
         w, h = director.get_window_size()
-        self.score_text = self._create_text(60, h-40)
-        self.score_money = self._create_text(w-20, h-40)
+        #create HUD background
+        rectangle = cocos.sprite.Sprite('blackBar.png', position=(w/2, h-32), opacity=100)
+        self.add(rectangle)
+        self.score_text = self._create_text(20, h-25)
+        self.money_text = self._create_text(20, h-55)
 
     def _create_text(self, x, y):
-        text = cocos.text.Label(font_size=18, font_name = 'Oswald', anchor_x='right', anchor_y='center')
+        text = cocos.text.Label(font_size=14, font_name = 'Oswald', anchor_x='left', anchor_y='center')
         text.position = (x, y)
         self.add(text)
         return text
 
     def update_score(self, score):
-        self.score_text.element.text = 'Score: %s' % score
+        self.score_text.element.text = f'Score: {score}'
 
     def update_money(self, money):
-        self.score_money.element.text = 'Money: %s' % money
-
+        self.money_text.element.text = f'Money: {money}'
+        
 
 class DefineLevel(object):
     def __init__(self):
@@ -413,6 +453,10 @@ if __name__ == '__main__':
     #    sys.path.append(os.path.abspath('/Users/SMSresults/Dropbox/Personal/Jungs/ScratchAndPythonHenrik/FactorySpiel'))
     pyglet.resource.path.append('img')
     pyglet.resource.reindex()
+
+    pyglet.gl.glEnable(GL_TEXTURE_2D)
+    pyglet.gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    
     cocos.director.director.init()
 
     levelInfo = DefineLevel()
