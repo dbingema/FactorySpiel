@@ -3,7 +3,7 @@
 # Geld System / transport
 
 # Machine:
-# - upgrades (viel spaeter)
+# - upgrades
 # - vielleicht ein bisschen groesser machen?
 
 # Extra / Details:
@@ -45,8 +45,6 @@ import random
 
 from pyglet.image import load, ImageGrid, Animation
 import pyglet.resource
-from pyglet.gl import *
-
 import cocos
 from cocos.director import director
 import cocos.tiles
@@ -201,8 +199,6 @@ class Machine(Actor):
         else:
             # bei max level - nix tun
             return False
-
-         
 
 
 class Piston(cocos.sprite.Sprite):
@@ -453,10 +449,6 @@ if __name__ == '__main__':
     #    sys.path.append(os.path.abspath('/Users/SMSresults/Dropbox/Personal/Jungs/ScratchAndPythonHenrik/FactorySpiel'))
     pyglet.resource.path.append('img')
     pyglet.resource.reindex()
-
-    pyglet.gl.glEnable(GL_TEXTURE_2D)
-    pyglet.gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    
     cocos.director.director.init()
 
     levelInfo = DefineLevel()
