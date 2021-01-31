@@ -60,6 +60,8 @@ class MachineMenu(cocos.layer.Layer):
             yi = self.center_y + menuRadius * math.sin(index * angleIncrease +
                                                        0.25*math.pi)
             # kleines bild hinzufuegen
+            option_shadow = cocos.sprite.Sprite('img/machine_shadow.png', (xi, yi), scale = 0.5, opacity = 100)
+            self.add(option_shadow)
             option = cocos.sprite.Sprite(image, (xi, yi), scale=0.6)
             self.add(option)
             # optin hinzufuegen zu liste mit file namen als key
