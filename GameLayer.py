@@ -16,11 +16,11 @@ import cocos.actions as ac
 import cocos.sprite
 
 
-import Background
-import Machine
-import ConveyorBelt
-import Material
-
+from background import Background
+from machine import Machine
+from conveyorBelt import ConveyorBelt
+from material import Material
+from machineMenu import MachineMenu
 
 
 
@@ -43,8 +43,9 @@ class GameLayer(cocos.layer.Layer):
         self.material_cost = 1
 
         self.machines = []
-
         self.conveyorSpots = []
+        self.machineOptions = None
+
 
         w, h = director.get_window_size()
         cell_size = 32
@@ -119,15 +120,15 @@ class GameLayer(cocos.layer.Layer):
         conveyor_belt = ConveyorBelt(x, y, direction, delay)
         self.add(conveyor_belt)
 
-    def create_machine(self, x, y, orientation, delay):
+    def create_machine(self, x, y, conveyorInfo, imageFile):
         if self.money >= self.machine_cost:
             self.money -= self.machine_cost
-            machine = Machine(x, y, orientation, delay)
+            orientation = conveyorInfo['Direction']
+            machine = Machine(x, y, orientation, self.levelInfo.beltDelay, imageFile)
             self.machines.append(machine)
             self.add(machine)
-            return True
-        else:
-            return False
+            self.conveyorSpots.remove(conveyorInfo) #no longer valid spot
+
 
     def create_material(self):
         if self.money >= self.material_cost:
@@ -171,11 +172,15 @@ class GameLayer(cocos.layer.Layer):
                     
         # neue Maschine?
         for conveyorInfo in self.conveyorSpots:
-            if self.coords_within(x, y, conveyorInfo['Corners']):
-                if self.create_machine(x, y, conveyorInfo['Direction'], self.levelInfo.beltDelay):
-                    self.conveyorSpots.remove(conveyorInfo) #no longer valid spot
-        
-            
+            x1, y1, x2, y2 = conveyorInfo['Corners']
+            if cocos.rect.Rect(x1, y1, x2-x1, y2-y1).contains(x, y):
+
+                # uebergebe an "machine options" mit conveyorInfo und Anzahl der Maschinene Optionen von Level Info
+                # das kuemmert sich dann um den Rest
+                # und ruft create machein auf wenn eine maschine gebaut werdensoll
+                menu = MachineMenu(conveyorInfo, self.levelInfo)
+                self.add(menu)
+
 
     def remove(self, obj):
         if isinstance(obj, Material) and obj.processed:

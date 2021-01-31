@@ -2,7 +2,8 @@
 # fliessband auf dem bildschirm
 #
 
-import Actor
+
+from actor import Actor
 from pyglet.image import load, ImageGrid, Animation
 
 

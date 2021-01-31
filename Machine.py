@@ -7,8 +7,8 @@ import time
 from pyglet.image import load, ImageGrid, Animation
 import cocos
 
-import Actor
-import Piston
+from actor import Actor
+from piston import Piston
 
 
 
@@ -20,10 +20,14 @@ class Machine(Actor):
         seq = ImageGrid(load(imgage), 1, 6)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
-    def __init__(self, x, y, conveyor_direction, delay):
-        image = load('img/machine.png') 
+    def __init__(self, x, y, conveyor_direction, delay, imageFile):
+        image = load(imageFile) 
         self.delay = delay
         self.conveyor_direction = conveyor_direction
+        if conveyor_direction == 'up' or conveyor_direction == 'down':
+          #rotate image
+          # PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!
+          # bild rotiert sich nicht
         
         # now create actual instance
         super(Machine, self).__init__(image, x, y)

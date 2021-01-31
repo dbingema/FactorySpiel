@@ -5,6 +5,7 @@
 # Machine:
 # - upgrades
 # - vielleicht ein bisschen groesser machen?
+# - verschiedene typen von maschinen z.B.: holz maschine (was wir jetzt haben), elektronik maschine, stoff maschine, eisen maschine` etc...
 
 # Extra / Details:
 

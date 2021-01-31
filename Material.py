@@ -8,7 +8,7 @@ from pyglet.image import load
 import cocos.actions as ac
 
 
-import Actor
+from actor import Actor
 
 
 

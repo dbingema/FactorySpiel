@@ -5,12 +5,9 @@ from cocos.director import director
 import cocos.scene
 
 
-import DefineLevel
-import HUD
-import GameLayer
-
-
-
+from defineLevel import DefineLevel
+from hud import HUD
+from gameLayer import GameLayer
 
 
 if __name__ == '__main__':
