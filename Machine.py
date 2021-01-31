@@ -11,9 +11,6 @@ from actor import Actor
 from piston import Piston
 
 
-
-
-
 class Machine(Actor):
 
     def load_animation(self, imgage, delay):
@@ -22,17 +19,19 @@ class Machine(Actor):
 
     def __init__(self, x, y, conveyor_direction, delay, imageFile):
         image = load(imageFile) 
-        self.delay = delay
-        self.conveyor_direction = conveyor_direction
-        if conveyor_direction == 'up' or conveyor_direction == 'down':
-          #rotate image
-          # PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM PROBLEM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! !!!!!!!!!!!!
-          # bild rotiert sich nicht
         
         # now create actual instance
         super(Machine, self).__init__(image, x, y)
         self.x, self.y = self.nearestSpot(x, y)
+        self.delay = delay
+        self.conveyor_direction = conveyor_direction
 
+        if conveyor_direction == 'up' or conveyor_direction == 'down':
+            self.orientation = 'horizontal'
+            self.rotation = 90
+        else:
+            self.orientation = 'vertical'
+        
 
         # define collision box
         # increase size of collision box to hit sooner when conveyor belt is faster
@@ -55,7 +54,7 @@ class Machine(Actor):
         new_y = round((y - 16) / 32) * 32 + 16
         return new_x, new_y
 
-     # make sure material is in a valid position (in front and not behind the machine)
+    # make sure material is in a valid position (in front and not behind the machine)
     def can_hit(self, material):
         if self.conveyor_direction == 'up':
             if material and material.y < self.y:
@@ -91,13 +90,6 @@ class Machine(Actor):
         self.lastStamp = time.perf_counter()
         # animation neu starten - ended von alleine
         animation = self.load_animation('img/machineReload.png', self.cooldown / 5)
-
-        if self.conveyor_direction == 'up' or self.conveyor_direction == 'down':
-            self.orientation = 'horizontal'
-            animation = animation.get_transform(rotate=90)
-        else:
-            self.orientation = 'vertical'
-            # self.rotation= 0 (default)
             
         # punkte oben drauf legen
         self.reload_animation = cocos.sprite.Sprite(animation)
