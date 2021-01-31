@@ -7,9 +7,8 @@ from actor import Actor
 from pyglet.image import load, ImageGrid, Animation
 
 
-
 class ConveyorBelt(Actor):
-  
+
     def load_animation(self, imgage, delay):
         seq = ImageGrid(load(imgage), 4, 1)
         return Animation.from_image_sequence(seq, delay)

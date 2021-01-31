@@ -3,7 +3,6 @@
 #
 
 
-
 from pyglet.image import load, ImageGrid, Animation
 
 import cocos
@@ -11,17 +10,16 @@ import cocos.euclid as eu
 import cocos.actions as ac
 
 
-
-
 class Piston(cocos.sprite.Sprite):
 
     def load_animation(self, imgage, delay):
-        seq = ImageGrid(load(imgage), 1, self.numFrames)
+        seq = ImageGrid(load(imgage), 1, self.num_frames)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
     def __init__(self, x, y, orientation, target, machine, delay):
-        self.delay = delay / 2.38 #using universal delay calculate animation speed accordingly
-        self.numFrames = 7
+        # using universal delay calculate animation speed accordingly
+        self.delay = delay / 2.38
+        self.num_frames = 7
         self.target = target
         self.machine = machine
         animation = self.load_animation('img/piston.png', self.delay)
@@ -32,9 +30,9 @@ class Piston(cocos.sprite.Sprite):
 
         # now create actual instance
         pos = eu.Vector2(x, y)
-        super(Piston, self).__init__(animation, pos)
+        super().__init__(animation, pos)
 
         self.do(ac.CallFunc(self.target.replace) +
-                ac.Delay(self.numFrames * self.delay) +
+                ac.Delay(self.num_frames * self.delay) +
                 ac.CallFunc(self.machine.begin_reload) +
                 ac.CallFunc(self.kill))

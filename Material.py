@@ -2,22 +2,15 @@
 # Das Ding an dem gearbeitet wird, erst ist es Rohstoff, dann PRodukt.
 #
 
-
 from pyglet.image import load
-
 import cocos.actions as ac
-
 
 from actor import Actor
 
 
-
-
-
-
 class Material(Actor):
     def __init__(self, x, y, actions, delay):
-        super(Material, self).__init__('img/rawMaterial.png', x, y)
+        super().__init__('img/rawMaterial.png', x, y)
         self.x = x
         self.y = y
         self.processed = False

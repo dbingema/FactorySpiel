@@ -12,7 +12,6 @@ from gameLayer import GameLayer
 
 if __name__ == '__main__':
 
-    #    sys.path.append(os.path.abspath('/Users/SMSresults/Dropbox/Personal/Jungs/ScratchAndPythonHenrik/FactorySpiel'))
     pyglet.resource.path.append('img')
     pyglet.resource.reindex()
     cocos.director.director.init()
