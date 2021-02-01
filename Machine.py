@@ -55,6 +55,13 @@ class Machine(Actor):
         new_y = round((y - 16) / 32) * 32 + 16
         return new_x, new_y
 
+    def get_bounding_box(self):
+        # original breite hoehe
+        w, h = self.width, self.height
+        if self.orientation == 'horizontal':
+            w, h = h, w
+        return cocos.rect.Rect(self.x - w/2, self.y - h/2, w, h)
+
     # make sure material is in a valid position
     # (in front and not behind the machine)
     def can_hit(self, material):
@@ -103,8 +110,8 @@ class Machine(Actor):
             # noch kein upgrade bislang
             self.cooldown = 1.0
             self.upgrade_level = 1
-            # BIld wechseln!
-            self.image = load('img/machine_upgrade.png')
+            upgrade_image = cocos.sprite.Sprite('img/upgrade.png', (0, 0), opacity=200)
+            self.add(upgrade_image)
             return True
         else:
             # bei max level - nix tun

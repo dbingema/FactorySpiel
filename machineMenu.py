@@ -39,7 +39,7 @@ class MachineMenu(cocos.layer.Layer):
 
         w2, h2 = cancel.width/2, cancel.height/2
         self.machineOptions = {"cancel": (self.center_x-w2, self.center_y-h2,
-                                          self.center_x+w2, self.center_y+h2, 0)}
+                                          self.center_x+w2, self.center_y+h2, 0, None)}
 
         numMachines = len(self.levelInfo.machines)
         menuRadius = 55

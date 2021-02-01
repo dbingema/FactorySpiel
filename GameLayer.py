@@ -164,7 +164,7 @@ class GameLayer(cocos.layer.Layer):
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?
         for machine in self.machines:
-            if machine.contains(x, y) and self.money >= machine.upgrade_cost:
+            if machine.get_bounding_box().contains(x, y) and self.money >= machine.upgrade_cost:
                 if machine.upgrade():
                     self.money -= machine.upgrade_cost
 
