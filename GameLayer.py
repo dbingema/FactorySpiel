@@ -34,8 +34,8 @@ class GameLayer(cocos.layer.Layer):
         self.score = self._score = 0
         self.levelInfo = levelInfo
         self.add(hud)
-        self.machine_cost = 20
         self.material_cost = 1
+        self.machine_menu = None
 
         self.machines = []
         self.conveyorSpots = []
@@ -117,11 +117,11 @@ class GameLayer(cocos.layer.Layer):
         conveyor_belt = ConveyorBelt(x, y, direction, delay)
         self.add(conveyor_belt)
 
-    def create_machine(self, x, y, conveyorInfo, imageFile):
-        if self.money >= self.machine_cost:
-            self.money -= self.machine_cost
+    def create_machine(self, x, y, conveyorInfo, imageFile, cost, toolImage):
+        if self.money >= cost:
+            self.money -= cost
             orientation = conveyorInfo['Direction']
-            machine = Machine(x, y, orientation, self.levelInfo.beltDelay, imageFile)
+            machine = Machine(x, y, orientation, self.levelInfo.beltDelay, imageFile, toolImage)
             self.machines.append(machine)
             self.add(machine)
             self.conveyorSpots.remove(conveyorInfo)   # no longer valid spot
@@ -159,6 +159,8 @@ class GameLayer(cocos.layer.Layer):
                 self.create_material()
                 self.timeStamp = self.elapsedTime
 
+    
+
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?
         for machine in self.machines:
@@ -169,18 +171,20 @@ class GameLayer(cocos.layer.Layer):
         # neue Maschine?
         for conveyorInfo in self.conveyorSpots:
             x1, y1, x2, y2 = conveyorInfo['Corners']
-            if cocos.rect.Rect(x1, y1, x2-x1, y2-y1).contains(x, y):
+            if cocos.rect.Rect(x1, y1, x2-x1, y2-y1).contains(x, y) and not self.machine_menu:
 
                 # uebergebe an "machine options" mit conveyorInfo und Anzahl
                 # der Maschinene Optionen von Level Info
                 # das kuemmert sich dann um den Rest
                 # und ruft create machein auf wenn eine maschine gebaut
                 # werden soll
-                menu = MachineMenu(conveyorInfo, self.levelInfo)
-                self.add(menu)
+                self.machine_menu = MachineMenu(conveyorInfo, self.levelInfo)
+                self.add(self.machine_menu)
 
     def remove(self, obj):
         if isinstance(obj, Material) and obj.processed:
             self.score += obj.score
             self.money += obj.value
+        elif isinstance(obj, MachineMenu):
+            self.machine_menu = None
         super().remove(obj)

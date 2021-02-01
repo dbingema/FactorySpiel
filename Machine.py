@@ -8,7 +8,7 @@ from pyglet.image import load, ImageGrid, Animation
 import cocos
 
 from actor import Actor
-from piston import Piston
+from tool import Tool
 
 
 class Machine(Actor):
@@ -17,13 +17,14 @@ class Machine(Actor):
         seq = ImageGrid(load(imgage), 1, 6)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
-    def __init__(self, x, y, conveyor_direction, delay, imageFile):
+    def __init__(self, x, y, conveyor_direction, delay, imageFile, toolImage):
         image = load(imageFile)
 
         # now create actual instance
         super().__init__(image, x, y)
         self.x, self.y = self.nearestSpot(x, y)
         self.delay = delay
+        self.toolImage = toolImage
         self.conveyor_direction = conveyor_direction
 
         if conveyor_direction in ('up', 'down'):
@@ -76,8 +77,8 @@ class Machine(Actor):
         if self.target is not None:
             if not self.target.processed:
                 if time.perf_counter() > self.lastStamp + self.cooldown:
-                    self.parent.add(Piston(self.x, self.y, self.orientation,
-                                           self.target, self, self.delay))
+                    self.parent.add(Tool(self.x, self.y, self.orientation,
+                                           self.target, self, self.delay, self.toolImage))
                     self.target = None
 
     def collide(self, material):

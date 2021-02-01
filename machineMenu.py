@@ -39,16 +39,18 @@ class MachineMenu(cocos.layer.Layer):
 
         w2, h2 = cancel.width/2, cancel.height/2
         self.machineOptions = {"cancel": (self.center_x-w2, self.center_y-h2,
-                                          self.center_x+w2, self.center_y+h2)}
+                                          self.center_x+w2, self.center_y+h2, 0)}
 
         numMachines = len(self.levelInfo.machines)
-        menuRadius = 60
+        menuRadius = 55
 
         angleIncrease = 2*math.pi/numMachines
 
         for index, machine in enumerate(self.levelInfo.machines):
             # liste enthaelt die images: machine = ein pfad und bild
-            image = load(machine)
+            # auch fuer das Tool: ein bild
+            imgage = machine['image']
+            image = load(imgage)
             # w,h, = groesse von bild = 32 breit, 96 hoch
             w2, h2 = image.width/2, image.height/2
             # bild hin malen
@@ -67,16 +69,16 @@ class MachineMenu(cocos.layer.Layer):
             self.add(option)
             # optin hinzufuegen zu liste mit file namen als key
             w2, h2 = option.width/2, option.height/2
-            self.machineOptions[machine] = (xi-w2, yi-h2, xi+w2, yi+h2)
+            self.machineOptions[imgage] = (xi-w2, yi-h2, xi+w2, yi+h2, machine['cost'], machine['tool'])
 
     def on_mouse_release(self, x, y, buttons, mod):
         # hier wird das pop up menu ausgewertet
         # schauen welches man ausgwewaehlt hat
-        for option, rect in self.machineOptions.items():
-            x1, y1, x2, y2 = rect
+        for option, info in self.machineOptions.items():
+            x1, y1, x2, y2, cost, tool = info
             if cocos.rect.Rect(x1, y1, x2-x1, y2-y1).contains(x, y):
                 if option != "cancel":
                     self.parent.create_machine(self.center_x, self.center_y,
-                                               self.conveyorInfo, option)
+                                               self.conveyorInfo, option, cost, tool)
 
         self.kill()
