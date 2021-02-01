@@ -13,7 +13,7 @@ if __name__ == '__main__':
     pyglet.resource.path.append('img')
     pyglet.resource.reindex()
     cocos.director.director.init()
-    
+
     levelInfo = DefineLevel()
     hud = HUD()
 
