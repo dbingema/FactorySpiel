@@ -85,7 +85,7 @@ class Machine(Actor):
             if not self.target.processed:
                 if time.perf_counter() > self.lastStamp + self.cooldown:
                     self.parent.add(Tool(self.x, self.y, self.orientation,
-                                           self.target, self, self.delay, self.toolImage))
+                                         self.target, self, self.delay, self.toolImage))
                     self.target = None
 
     def collide(self, material):
