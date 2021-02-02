@@ -4,7 +4,7 @@
  <tileset firstgid="17" source="factoryTileSetMoreBoxes.tsx"/>
  <layer id="1" name="TileLayer1" width="20" height="15">
   <data encoding="base64" compression="zlib">
-   eJzNU8kNgDAMS9mAAYCm+w+JkPqwjA088uBhqU1a53DSIqIVYv05jgnMeac7+3PC+ZlL+Tucx0sP09jdvy5snIN6g5wuJttVbeMDv8tlK0blLF9YiqFiYE+VDk4b5uA5drOSoMuI+8yyZgkxeH+Y7xB8TnuM/bRTDWo7AUAADDw=
+   eJzNk0sOgDAIRKk3MPG30Urvf0hZdDEZwWrShYuXKOhAGZpEJHVk/Dm5gj0f9M55rUR51vLyJzyXxgw1iEf/nU6Me/C+Qc2oJse9s5UX+lEvm7EYeyemxmy/shqzMXTCq4Ez9XyIvGEN3uNoVxR8KXLfWfZMoQbfH9bLjl7kPdZ+ulMJznYBh7AMaw==
   </data>
  </layer>
 </map>
