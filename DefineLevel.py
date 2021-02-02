@@ -7,7 +7,7 @@ class DefineLevel():
 
     def __init__(self):
         self.start = (0, 5)
-        self.segments = [(10, 0), (0, 8), (-3, 0), (0, -3)]
+        self.segments = [(10, 0), (0, 6), (-3, 0), (0, -3)]
         self.layer = 'TileLayer1'
         # belt delay groesser als 1.5 gibt probleme (ist sowieso zu langsam)
         self.beltDelay = 0.1

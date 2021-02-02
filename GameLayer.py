@@ -64,7 +64,7 @@ class GameLayer(cocos.layer.Layer):
                 # aus um den Ueberlapp zu verhindern
                 self.create_conveyor_belt((start[0] + step[0] + 0.5) * self.cell_size,
                                           (start[1] + step[1] + 0.5) * self.cell_size, direction,
-                                          corner=(index == 0 or index == 1 or index == len(steps) - 1))
+                                          corner=(index == 0 or index == len(steps) - 1))
             start = (start[0] + segment[0], start[1] + segment[1])
 
         self.elapsedTime = 0
@@ -111,7 +111,7 @@ class GameLayer(cocos.layer.Layer):
     def create_conveyor_belt(self, x, y, direction, corner):
         delay = self.levelInfo.beltDelay
         if not corner:
-            conveyorSpotInfo = {'Corners': (x - self.cell_size/2, y - self.cell_size/2, 
+            conveyorSpotInfo = {'Corners': (x - self.cell_size/2, y - self.cell_size/2,
                                             x + self.cell_size/2, y + self.cell_size/2),
                                 'Direction': direction}
             self.conveyorSpots.append(conveyorSpotInfo)
@@ -161,11 +161,11 @@ class GameLayer(cocos.layer.Layer):
                 self.create_material()
                 self.timeStamp = self.elapsedTime
 
-    
+
 
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?
-        for machine in self.machines:         
+        for machine in self.machines:
             if machine.get_bounding_box().contains(x, y) and self.money >= machine.upgrade_cost:
                 if machine.upgrade():
                     self.money -= machine.upgrade_cost
