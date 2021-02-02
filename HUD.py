@@ -21,7 +21,7 @@ class HUD(cocos.layer.Layer):
         self.money_text = self._create_text(20, h-55)
 
     def _create_text(self, x, y):
-        text = cocos.text.Label(font_size=14, font_name='Oswald',
+        text = cocos.text.Label(font_size=16, font_name='Oswald',
                                 anchor_x='left', anchor_y='center')
         text.position = (x, y)
         self.add(text)

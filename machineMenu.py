@@ -42,7 +42,7 @@ class MachineMenu(cocos.layer.Layer):
                                           self.center_x+w2, self.center_y+h2, 0, None)}
 
         numMachines = len(self.levelInfo.machines)
-        menuRadius = 55
+        menuRadius = 110
 
         angleIncrease = 2*math.pi/numMachines
 
@@ -51,7 +51,7 @@ class MachineMenu(cocos.layer.Layer):
             # auch fuer das Tool: ein bild
             imgage = machine['image']
             image = load(imgage)
-            # w,h, = groesse von bild = 32 breit, 96 hoch
+            # w,h, = groesse von bild = 64 breit, 192 hoch
             w2, h2 = image.width/2, image.height/2
             # bild hin malen
             # neue position

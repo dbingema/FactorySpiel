@@ -42,9 +42,10 @@ class GameLayer(cocos.layer.Layer):
         self.machineOptions = None
 
         w, h = director.get_window_size()
-        cell_size = 32
+        # tile map ist 64 x 64 pixels pro tile
+        self.cell_size = 64
         self.coll_man = cm.CollisionManagerGrid(0, w, 0, h,
-                                                cell_size, cell_size)
+                                                self.cell_size, self.cell_size)
 
         start = levelInfo.start
         segments = levelInfo.segments
@@ -61,8 +62,8 @@ class GameLayer(cocos.layer.Layer):
                 # index = len(steps) - 1: letze vor der Ecke
                 # definiere "an der Ecke" als neuen Typ und denke dann logic
                 # aus um den Ueberlapp zu verhindern
-                self.create_conveyor_belt((start[0] + step[0] + 0.5) * 32,
-                                          (start[1] + step[1] + 0.5) * 32, direction,
+                self.create_conveyor_belt((start[0] + step[0] + 0.5) * self.cell_size,
+                                          (start[1] + step[1] + 0.5) * self.cell_size, direction,
                                           corner=(index == 0 or index == 1 or index == len(steps) - 1))
             start = (start[0] + segment[0], start[1] + segment[1])
 
@@ -110,7 +111,8 @@ class GameLayer(cocos.layer.Layer):
     def create_conveyor_belt(self, x, y, direction, corner):
         delay = self.levelInfo.beltDelay
         if not corner:
-            conveyorSpotInfo = {'Corners': (x - 16, y - 16, x + 16, y + 16),
+            conveyorSpotInfo = {'Corners': (x - self.cell_size/2, y - self.cell_size/2, 
+                                            x + self.cell_size/2, y + self.cell_size/2),
                                 'Direction': direction}
             self.conveyorSpots.append(conveyorSpotInfo)
         # benutzen: conveyorSpotInfo['Direction'] == 'up'?
@@ -132,9 +134,9 @@ class GameLayer(cocos.layer.Layer):
             startPos = self.levelInfo.start
             segments = self.levelInfo.segments
             delay = self.levelInfo.beltDelay
-            x = (startPos[0] + 0.5) * 32
-            y = (startPos[1] + 0.5) * 32 + random.randint(-3, 3)  # so ist mehr zufall dabei
-            steps = [ac.MoveBy((segment[0] * 32, segment[1] * 32),
+            x = (startPos[0] + 0.5) * self.cell_size
+            y = (startPos[1] + 0.5) * self.cell_size + random.randint(-6, 6)  # so ist mehr zufall dabei
+            steps = [ac.MoveBy((segment[0] * self.cell_size, segment[1] * self.cell_size),
                                duration=(9*abs(segment[0] + segment[1]) * delay)) for segment in segments]
             actions = ac.RotateBy(0, 0)
             for step in steps:
@@ -163,7 +165,7 @@ class GameLayer(cocos.layer.Layer):
 
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?
-        for machine in self.machines:
+        for machine in self.machines:         
             if machine.get_bounding_box().contains(x, y) and self.money >= machine.upgrade_cost:
                 if machine.upgrade():
                     self.money -= machine.upgrade_cost

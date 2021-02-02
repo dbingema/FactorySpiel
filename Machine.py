@@ -51,8 +51,10 @@ class Machine(Actor):
 
         # so that machines are created in actual spots
     def nearestSpot(self, x, y):
-        new_x = round((x - 16) / 32) * 32 + 16
-        new_y = round((y - 16) / 32) * 32 + 16
+        cell_size = 64
+        cell_size2 = cell_size / 2
+        new_x = round((x - cell_size2) / cell_size) * cell_size + cell_size2
+        new_y = round((y - cell_size2) / cell_size) * cell_size + cell_size2
         return new_x, new_y
 
     def get_bounding_box(self):
@@ -85,7 +87,7 @@ class Machine(Actor):
             if not self.target.processed:
                 if time.perf_counter() > self.lastStamp + self.cooldown:
                     self.parent.add(Tool(self.x, self.y, self.orientation,
-                                         self.target, self, self.delay, self.toolImage))
+                                           self.target, self, self.delay, self.toolImage))
                     self.target = None
 
     def collide(self, material):

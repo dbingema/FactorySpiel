@@ -14,7 +14,7 @@ class Material(Actor):
         self.x = x
         self.y = y
         self.processed = False
-        self.cshape.r = 3
+        self.cshape.r = 6
         self.value = 5
         self.score = 10
         self.delay = delay
