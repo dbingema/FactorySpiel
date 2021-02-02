@@ -2,14 +2,12 @@
 # Game Layer - das Kontroll Zentrum fuer alles...
 #
 
-import random
 
 import cocos
 from cocos.director import director
 import cocos.collision_model as cm
 import cocos.tiles
 import cocos.scene
-import cocos.actions as ac
 import cocos.sprite
 
 from background import Background
@@ -17,6 +15,7 @@ from machine import Machine
 from conveyorBelt import ConveyorBelt
 from material import Material
 from machineMenu import MachineMenu
+from storage import Storage
 
 
 class GameLayer(cocos.layer.Layer):
@@ -25,6 +24,10 @@ class GameLayer(cocos.layer.Layer):
 
     def __init__(self, levelInfo, hud):
         self.hud = hud
+        self.levelInfo = levelInfo
+
+        # mache das lager
+        self.storage = Storage(self.levelInfo)
 
         super().__init__()
         w, h = cocos.director.director.get_window_size()
@@ -32,10 +35,12 @@ class GameLayer(cocos.layer.Layer):
         self.height = h
         self.money = self._money = 99999   # fuer tests viel geld
         self.score = self._score = 0
-        self.levelInfo = levelInfo
         self.add(hud)
         self.material_cost = 1
         self.machine_menu = None
+
+        # wie oft ein material los geschickt wird
+        self.material_sendoff = 1
 
         self.machines = []
         self.conveyorSpots = []
@@ -43,7 +48,7 @@ class GameLayer(cocos.layer.Layer):
 
         w, h = director.get_window_size()
         # tile map ist 64 x 64 pixels pro tile
-        self.cell_size = 64
+        self.cell_size = self.levelInfo.cell_size
         self.coll_man = cm.CollisionManagerGrid(0, w, 0, h,
                                                 self.cell_size, self.cell_size)
 
@@ -68,7 +73,7 @@ class GameLayer(cocos.layer.Layer):
             start = (start[0] + segment[0], start[1] + segment[1])
 
         self.elapsedTime = 0
-        self.timeStamp = 0
+#        self.timeStamp = 0
 
         self.schedule(self.game_loop)
 
@@ -111,7 +116,7 @@ class GameLayer(cocos.layer.Layer):
     def create_conveyor_belt(self, x, y, direction, corner):
         delay = self.levelInfo.beltDelay
         if not corner:
-            conveyorSpotInfo = {'Corners': (x - self.cell_size/2, y - self.cell_size/2,
+            conveyorSpotInfo = {'Corners': (x - self.cell_size/2, y - self.cell_size/2, 
                                             x + self.cell_size/2, y + self.cell_size/2),
                                 'Direction': direction}
             self.conveyorSpots.append(conveyorSpotInfo)
@@ -128,22 +133,6 @@ class GameLayer(cocos.layer.Layer):
             self.add(machine)
             self.conveyorSpots.remove(conveyorInfo)   # no longer valid spot
 
-    def create_material(self):
-        if self.money >= self.material_cost:
-            self.money -= self.material_cost
-            startPos = self.levelInfo.start
-            segments = self.levelInfo.segments
-            delay = self.levelInfo.beltDelay
-            x = (startPos[0] + 0.5) * self.cell_size
-            y = (startPos[1] + 0.5) * self.cell_size + random.randint(-6, 6)  # so ist mehr zufall dabei
-            steps = [ac.MoveBy((segment[0] * self.cell_size, segment[1] * self.cell_size),
-                               duration=(9*abs(segment[0] + segment[1]) * delay)) for segment in segments]
-            actions = ac.RotateBy(0, 0)
-            for step in steps:
-                actions += step
-            material = Material(x, y, actions, delay)
-            self.add(material)
-
     def game_loop(self, dt):
         self.coll_man.clear()
         for obj in self.get_children():
@@ -155,17 +144,21 @@ class GameLayer(cocos.layer.Layer):
             machine.collide(material)
 
         self.elapsedTime += dt
-        delay = self.levelInfo.beltDelay
-        if random.random() < 0.02:
-            if self.elapsedTime - self.timeStamp > (4.5 * delay):
-                self.create_material()
-                self.timeStamp = self.elapsedTime
+#        delay = self.levelInfo.beltDelay
+# kein zufall, sondern regelmaessig
+#        if random.random() < 0.02:
+        if (self.elapsedTime > self.material_sendoff):
+            self.elapsedTime = 0
+ #           if self.elapsedTime - self.timeStamp > (4.5 * delay):
+ #               self.create_material()
+            self.storage.send_material()
+ #               self.timeStamp = self.elapsedTime
 
-
+    
 
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?
-        for machine in self.machines:
+        for machine in self.machines:         
             if machine.get_bounding_box().contains(x, y) and self.money >= machine.upgrade_cost:
                 if machine.upgrade():
                     self.money -= machine.upgrade_cost

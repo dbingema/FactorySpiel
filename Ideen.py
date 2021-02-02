@@ -4,18 +4,18 @@
 
 # Machine:
 # - upgrades
-# - vielleicht ein bisschen groesser machen?
 # - verschiedene typen von maschinen z.B.: holz maschine (was wir jetzt haben), elektronik maschine, stoff maschine, eisen maschine` etc...
+# materialen muessen manchmal mehrmals von ein bestimmten typ von machine bearbeitet werden
 
 # Extra / Details:
 
 # jedes verkaufte produkt gibt einen Score (Stuhl = 1, Fernseher = 5 ...), zaehlt hoch
 # produkt gibt auch Geld, aber Geld gibt man aus fuer upgrades und up-level/andere Produkte
 # man verliert, wenn man auf 0 Euro gesunken ist und keine Produkte mehr hat zum verkaufen
-# zeitdruck, timer. man darf nicht zu lange warten.
-#   z.B.: im laufe der zeit bringt das produkt aber immer weniger geld (Anzeigen wie thermometer),
+# zeitdruck, timer. man darf nicht zu lange warten. 
+#   z.B.: im laufe der zeit bringt das produkt aber immer weniger geld (Anzeigen wie thermometer), 
 #       roh stoff kostet aber immer das gleiche
-# verschidene levels haben ein bestimmten terrain
+# verschidene levels haben ein bestimmten terrain (factory, grass, ocean ...)
 
 # Spielverlauf:
 #   - rohstoff lager am anfang des fliessbandes
@@ -37,3 +37,39 @@
 #Ziel:
 #   - gewinnt das letzte level
 #   - oder einfach nur high score bekommen? -- irgenwann verliert man, es wird immer schwieriger/schneller
+
+# Lager:
+# Durch Klicken wird lager mit 10 neuen Rohstoffen aufgefuellt.
+# Das kostet etwas. man muss klicken wenn manRohstoff braucht
+# im programm eine neue Klasse, die Lager ist: malt die Rohstoffe hin, zieht das Geld ab, schickt Rohstoffe los, und so
+# create_material dann in Lager Klasse
+# Autofill option, bei hoeeren levels macht man mehr materialen darein:          10 -> 50 -> 100
+
+
+
+
+# Levels:
+# jeder Level hat info in "defineLevel" hinterlegt - eine Liste mit Info als Dictionary oder so 
+# wenn ein score uber ein bestimmte Zahl geht, wird der LEvel (Scene) mit Transition ausgetauscht
+# oder man klcikt auf einen Button der dann verfuegbar ist wenn der Score hoch genug wird
+# bei jeden level gibt es bestimmten materialen die man bauen muss und 
+
+
+# Multi PRocess:
+# jedes material hat eine bestimmte reihenfolge in dem sie gebaut werden muss (3 holz machinen -> 1 elektronik -> 2 stoff)
+# hinweise im HUD mit BIldern
+
+
+# mehr als ein process pro level, auf einem fliessband
+# verschiedene ausgangsmaterialien fuer jeden process, 
+# ein process mit brauenen rohstoffen, einer mit lila rohstoffen
+# auswahl im lager durch menu
+
+
+# neue Klasse fuer Fliessband
+# besteht aus Fliessband-Elementn (was jetzt conveyer Belt heisst)
+# kann sich aus elementen bauen
+# faengt auch die Mausklicks ab und macht dann die Maschinen
+# und was das Band sonst noch so machen muessen
+#
+

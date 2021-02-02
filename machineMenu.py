@@ -56,10 +56,8 @@ class MachineMenu(cocos.layer.Layer):
             # bild hin malen
             # neue position
             # durch winkel und radius position rechnen
-            xi = self.center_x + menuRadius * math.cos(index * angleIncrease +
-                                                       0.25*math.pi)
-            yi = self.center_y + menuRadius * math.sin(index * angleIncrease +
-                                                       0.25*math.pi)
+            xi = self.center_x + menuRadius * math.cos(index * angleIncrease)
+            yi = self.center_y + menuRadius * math.sin(index * angleIncrease)
             # kleines bild hinzufuegen
             option_shadow = cocos.sprite.Sprite('img/machine_shadow.png',
                                                 (xi, yi), scale=0.5,
