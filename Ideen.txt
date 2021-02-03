@@ -2,6 +2,7 @@ Was wir als naechstes machen sollen:
 tips / tutorial
 Geld System / transport
 
+
 Machine:
 - upgrades
 - verschiedene typen von maschinen z.B.: holz maschine (was wir jetzt haben), elektronik maschine, stoff maschine, eisen maschine` etc...
