@@ -1,11 +1,15 @@
 """Test"""
 
 
-print('Python Test') jkdfshjk
-print('More test...') - und hier tippt Henrik...
+print('Python Test')
+print('More test...')
 print('Noch eine Test Zeile...')
-Hier tippt Papi...
+Hier tippt+-*9 Papi...
 
 # test fuer tippt wieso kein Fehler
 
-syntax
+syntax +* d = 15
+noch ein **fehler + 2 = 
+
+self.*test = tes +* 1 = wqe - 12
+klsajd
