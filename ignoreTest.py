@@ -1,15 +1,21 @@
 """Test"""
 
-
 print('Python Test')
 print('More test...')
 print('Noch eine Test Zeile...')
-Hier tippt+-*9 Papi...
+Hier = tippt * Papi**2
 
 # test fuer tippt wieso kein Fehler
+l;kdsf 0943 89 34;lsadkr09
+idj fioerje if134t0y7t]8
 
 syntax +* d = 15
-noch ein **fehler + 2 = 
+noch ein **<(&3fehler + 2 =lfdsk _0(*Y)
 
-self.*test = tes +* 1 = wqe - 12
-klsajd
+sda,lk(*^$W*     $#@)( )
+kjd_)$(#@)*$B
+
+self.*test = tes +* 1 = wqe - 12kdsj
+        klsajd+9":><_Q@(J*$B $# )
+
+print(sdkj)
