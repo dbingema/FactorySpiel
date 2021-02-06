@@ -10,6 +10,7 @@ import cocos
 from actor import Actor
 from tool import Tool
 
+# test
 
 class Machine(Actor):
 

@@ -154,7 +154,7 @@ class GameLayer(cocos.layer.Layer):
             self.storage.send_material()
  #               self.timeStamp = self.elapsedTime
 
-    
+    #
 
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?

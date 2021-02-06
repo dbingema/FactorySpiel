@@ -23,7 +23,7 @@ class Storage(cocos.layer.Layer):
         super().__init__()
         self.levelInfo = levelInfo
 
-        # liste der kreierten materialein
+        # liste der kreierten materialen
         self.materials = []
         self.materials_on_click = 10
         self.cell_size = self.levelInfo.cell_size
@@ -60,7 +60,7 @@ class Storage(cocos.layer.Layer):
             action = None
             delay = 0
             for index in range(self.materials_on_click):
-                x, y = bisschen random # todo: hier felht noch was...
+                x, y = bisschen random # todo: hier fehlt noch was...
                 material = Material(x, y, action, delay)
                 self.materials.append(material)
                 self.add(material)
