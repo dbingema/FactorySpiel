@@ -6,6 +6,7 @@ import cocos.sprite
 import cocos.euclid as eu
 import cocos.collision_model as cm
 
+# todo dies ist ein test
 
 class Actor(cocos.sprite.Sprite):
     def __init__(self, image, x, y):

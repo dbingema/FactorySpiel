@@ -60,7 +60,7 @@ class Storage(cocos.layer.Layer):
             action = None
             delay = 0
             for index in range(self.materials_on_click):
-                x, y = bisschen random
+                x, y = bisschen random # todo: hier felht noch was...
                 material = Material(x, y, action, delay)
                 self.materials.append(material)
                 self.add(material)
