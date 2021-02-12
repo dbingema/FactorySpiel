@@ -10,6 +10,7 @@ import cocos
 from actor import Actor
 from tool import Tool
 
+
 # test
 
 class Machine(Actor):
@@ -18,14 +19,14 @@ class Machine(Actor):
         seq = ImageGrid(load(imgage), 1, 6)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
-    def __init__(self, x, y, conveyor_direction, delay, imageFile, toolImage):
-        image = load(imageFile)
+    def __init__(self, x, y, conveyor_direction, delay, image_file, tool_image):
+        image = load(image_file)
 
         # now create actual instance
         super().__init__(image, x, y)
-        self.x, self.y = self.nearestSpot(x, y)
+        self.x, self.y = self.nearest_spot(x, y)
         self.delay = delay
-        self.toolImage = toolImage
+        self.toolImage = tool_image
         self.conveyor_direction = conveyor_direction
 
         if conveyor_direction in ('up', 'down'):
@@ -41,7 +42,7 @@ class Machine(Actor):
         self.target = None
 
         # define timer for cool down period
-        self.lastStamp = time.perf_counter()
+        self.last_stamp = time.perf_counter()
         self.cooldown = 2.0
         self.upgrade_cost = 10
         self.upgrade_level = 0
@@ -51,7 +52,8 @@ class Machine(Actor):
         self.begin_reload()
 
         # so that machines are created in actual spots
-    def nearestSpot(self, x, y):
+
+    def nearest_spot(self, x, y):
         cell_size = 64
         cell_size2 = cell_size / 2
         new_x = round((x - cell_size2) / cell_size) * cell_size + cell_size2
@@ -63,7 +65,7 @@ class Machine(Actor):
         w, h = self.width, self.height
         if self.orientation == 'horizontal':
             w, h = h, w
-        return cocos.rect.Rect(self.x - w/2, self.y - h/2, w, h)
+        return cocos.rect.Rect(self.x - w / 2, self.y - h / 2, w, h)
 
     # make sure material is in a valid position
     # (in front and not behind the machine)
@@ -86,9 +88,11 @@ class Machine(Actor):
         # create piston
         if self.target is not None:
             if not self.target.processed:
-                if time.perf_counter() > self.lastStamp + self.cooldown:
+                if time.perf_counter() > self.last_stamp + self.cooldown:
                     self.parent.add(Tool(self.x, self.y, self.orientation,
-                                           self.target, self, self.delay, self.toolImage))
+                                         self.target, self, self.delay, self.toolImage))
+                    # reset last stamp so dass er nicht drauf haut waerend es eine piston schon gibt
+                    self.last_stamp = time.perf_counter()
                     self.target = None
 
     def collide(self, material):
@@ -99,11 +103,10 @@ class Machine(Actor):
     def begin_reload(self):
         if self.reload_animation is not None:
             self.remove(self.reload_animation)
-        self.lastStamp = time.perf_counter()
         # animation neu starten - ended von alleine
         animation = self.load_animation('img/machineReload.png',
                                         self.cooldown / 5)
-
+        self.last_stamp = time.perf_counter()
         # punkte oben drauf legen
         self.reload_animation = cocos.sprite.Sprite(animation)
         self.add(self.reload_animation)

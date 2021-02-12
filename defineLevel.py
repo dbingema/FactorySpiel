@@ -1,5 +1,5 @@
 #
-# Definiert die Details fuer den Level - wo das FOerderband liegt etc.
+# Definiert die Details fuer den Level - wo das Foerderband liegt etc.
 #
 
 import cocos
@@ -31,4 +31,4 @@ class DefineLevel():
 
         # roh stoffe Kosten und Frequenz aufs Band
         self.material_cost = 0
-        self.material_sendoff = 1
+        self.material_sendoff = 0.1
