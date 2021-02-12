@@ -31,4 +31,4 @@ class DefineLevel():
 
         # roh stoffe Kosten und Frequenz aufs Band
         self.material_cost = 0
-        self.material_sendoff = 0.1
+        self.material_sendoff = 1

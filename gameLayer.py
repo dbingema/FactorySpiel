@@ -145,7 +145,8 @@ class GameLayer(cocos.layer.Layer):
         self.coll_man.clear()
         for obj in self.get_children():
             if isinstance(obj, Material):
-                self.coll_man.add(obj)
+                if not obj.processed:
+                    self.coll_man.add(obj)
 
         for machine in self.machines:
             material = next(self.coll_man.iter_colliding(machine), None)

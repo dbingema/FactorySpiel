@@ -82,6 +82,7 @@ class Machine(Actor):
         if self.conveyor_direction == 'left':
             if material and material.x > self.x:
                 return True
+        return False
 
     def stamp(self):
         # if collision then:
@@ -103,18 +104,26 @@ class Machine(Actor):
     def begin_reload(self):
         if self.reload_animation is not None:
             self.remove(self.reload_animation)
-        # animation neu starten - ended von alleine
-        animation = self.load_animation('img/machineReload.png',
-                                        self.cooldown / 5)
         self.last_stamp = time.perf_counter()
+        # animation neu starten - ended von alleine
+        animation = self.load_animation('img/machineReload.png', self.cooldown / 5)
         # punkte oben drauf legen
+        self.reload_animation = cocos.sprite.Sprite(animation)
+        self.add(self.reload_animation)
+
+    def set_cooldown(self, val):
+        self.cooldown = val
+        animation = self.load_animation('img/machineReload.png', self.cooldown / 5)
+        # wenn es eine animation schon gibt loeschen
+        if self.reload_animation is not None:
+            self.remove(self.reload_animation)
         self.reload_animation = cocos.sprite.Sprite(animation)
         self.add(self.reload_animation)
 
     def upgrade(self):
         if self.upgrade_level == 0:
             # noch kein upgrade bislang
-            self.cooldown = 1.0
+            self.set_cooldown(1)
             self.upgrade_level = 1
             upgrade_image = cocos.sprite.Sprite('img/upgrade.png', (0, 0), opacity=200)
             self.add(upgrade_image)
