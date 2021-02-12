@@ -44,7 +44,7 @@ Durch Klicken wird lager mit 10 neuen Rohstoffen aufgefuellt.
 Das kostet etwas. man muss klicken wenn manRohstoff braucht
 im programm eine neue Klasse, die Lager ist: malt die Rohstoffe hin, zieht das Geld ab, schickt Rohstoffe los, und so
 create_material dann in Lager Klasse
-Autofill option, bei hoeeren levels macht man mehr materialen darein:          10 -> 50 -> 100
+Autofill option, bei hoeeren levels macht man mehr materialen darein: 10 -> 50 -> 100
 
 
 

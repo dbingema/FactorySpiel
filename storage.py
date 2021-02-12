@@ -56,11 +56,11 @@ class Storage(cocos.layer.Layer):
     
     def fill_up_storage(self):
         # lager auffuellen
-        if genug geld:
+        #if genug geld:
             action = None
             delay = 0
             for index in range(self.materials_on_click):
-                x, y = bisschen random # todo: hier fehlt noch was...
+                #x, y = random.randint() # todo: hier fehlt noch was...
                 material = Material(x, y, action, delay)
                 self.materials.append(material)
                 self.add(material)
