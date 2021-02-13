@@ -11,29 +11,19 @@ from actor import Actor
 from tool import Tool
 
 
-# test
-
 class Machine(Actor):
 
     def load_animation(self, imgage, delay):
         seq = ImageGrid(load(imgage), 1, 6)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
-    def __init__(self, x, y, conveyor_direction, delay, image_file, tool_image):
+    def __init__(self, x, y, delay, image_file, tool_image):
         image = load(image_file)
 
         # now create actual instance
         super().__init__(image, x, y)
-        self.x, self.y = self.nearest_spot(x, y)
         self.delay = delay
         self.toolImage = tool_image
-        self.conveyor_direction = conveyor_direction
-
-        if conveyor_direction in ('up', 'down'):
-            self.orientation = 'horizontal'
-            self.rotation = 90
-        else:
-            self.orientation = 'vertical'
 
         # define collision box
         # increase size of collision box to hit sooner
@@ -50,22 +40,6 @@ class Machine(Actor):
         # starte druck aufbau
         self.reload_animation = None
         self.begin_reload()
-
-        # so that machines are created in actual spots
-
-    def nearest_spot(self, x, y):
-        cell_size = 64
-        cell_size2 = cell_size / 2
-        new_x = round((x - cell_size2) / cell_size) * cell_size + cell_size2
-        new_y = round((y - cell_size2) / cell_size) * cell_size + cell_size2
-        return new_x, new_y
-
-    def get_bounding_box(self):
-        # original breite hoehe
-        w, h = self.width, self.height
-        if self.orientation == 'horizontal':
-            w, h = h, w
-        return cocos.rect.Rect(self.x - w / 2, self.y - h / 2, w, h)
 
     # make sure material is in a valid position
     # (in front and not behind the machine)

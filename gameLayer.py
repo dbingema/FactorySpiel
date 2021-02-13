@@ -19,6 +19,9 @@ from material import Material
 from machineMenu import MachineMenu
 # from storage import Storage
 
+# helper functions
+from helpers import *
+
 
 class GameLayer(cocos.layer.Layer):
 
@@ -45,7 +48,7 @@ class GameLayer(cocos.layer.Layer):
         self.material_sendoff = self.level_info.material_sendoff
 
         self.machines = []
-        self.conveyor_spots = []
+        self.conveyor_belts = []
         self.machine_options = None
 
         w, h = director.get_window_size()
@@ -64,19 +67,12 @@ class GameLayer(cocos.layer.Layer):
                     [(0, j) for j in range(0, y, self.sign(y))]
             direction = ('right' if x > 0 else 'left') if y == 0 else ('up' if y > 0 else 'down')
 
-            for index, step in enumerate(steps):
-                # index = 0: Ecke
-                # index = 1: erste nach der Ecke
-                # index = len(steps) - 1: letzte vor der Ecke
-                # definiere "an der Ecke" als neuen Typ und denke dann logic
-                # aus um den Ueberlapp zu verhindern
+            for step in steps:
                 self.create_conveyor_belt((start[0] + step[0] + 0.5) * self.cell_size,
-                                          (start[1] + step[1] + 0.5) * self.cell_size, direction,
-                                          corner=(index == 0 or index == len(steps) - 1))
+                                          (start[1] + step[1] + 0.5) * self.cell_size, direction)
             start = (start[0] + segment[0], start[1] + segment[1])
 
         self.elapsedTime = 0
-#        self.timeStamp = 0
 
         self.schedule(self.game_loop)
 
@@ -106,25 +102,18 @@ class GameLayer(cocos.layer.Layer):
         background = Background(layer)
         return background.get_background()
 
-    def create_conveyor_belt(self, x, y, direction, corner):
+    def create_conveyor_belt(self, x, y, direction):
         delay = self.level_info.beltDelay
-        if not corner:
-            conveyor_spot_info = {'Corners': (x - self.cell_size/2, y - self.cell_size/2,
-                                              x + self.cell_size/2, y + self.cell_size/2),
-                                  'Direction': direction}
-            self.conveyor_spots.append(conveyor_spot_info)
-        # benutzen: conveyor_spot_info['Direction'] == 'up'?
         conveyor_belt = ConveyorBelt(x, y, direction, delay)
+        self.conveyor_belts.append(conveyor_belt)
         self.add(conveyor_belt)
 
-    def create_machine(self, x, y, conveyor_info, image_file, cost, tool_image):
+    def create_machine(self, x, y, image_file, cost, tool_image):
         if self.money >= cost:
             self.money -= cost
-            orientation = conveyor_info['Direction']
-            machine = Machine(x, y, orientation, self.level_info.beltDelay, image_file, tool_image)
+            machine = Machine(x, y, self.level_info.beltDelay, image_file, tool_image)
             self.machines.append(machine)
             self.add(machine)
-            self.conveyor_spots.remove(conveyor_info)   # no longer valid spot
 
     def create_material(self):
         # ein neues Material kreieren und ins Lager legen
@@ -150,7 +139,8 @@ class GameLayer(cocos.layer.Layer):
 
         for machine in self.machines:
             material = next(self.coll_man.iter_colliding(machine), None)
-            machine.collide(material)
+            if material:
+                machine.collide(material)
 
         self.elapsedTime += dt
 #        delay = self.levelInfo.beltDelay
@@ -168,22 +158,20 @@ class GameLayer(cocos.layer.Layer):
     def on_mouse_press(self, x, y, buttons, mod):
         # upgrade?
         for machine in self.machines:         
-            if machine.get_bounding_box().contains(x, y) and self.money >= machine.upgrade_cost:
+            if get_bounding_box(machine).contains(x, y) and self.money >= machine.upgrade_cost:
                 if machine.upgrade():
                     self.money -= machine.upgrade_cost
 
         # neue Maschine?
-        for conveyorInfo in self.conveyor_spots:
-            x1, y1, x2, y2 = conveyorInfo['Corners']
-            if cocos.rect.Rect(x1, y1, x2-x1, y2-y1).contains(x, y) and not self.machine_menu:
+        # wo hat man hin geclickt?
+        # etwa auf eine Maschine? Oder ein Fliessband?
+        # Dann nix tun
+        clicked_any_objects = [get_bounding_box(obj).contains(x, y) for obj in self.machine + self.conveyer_belts]
 
-                # uebergebe an "machine options" mit conveyorInfo und Anzahl
-                # der Maschinen Optionen von Level Info
-                # das kuemmert sich dann um den Rest
-                # und ruft create machine auf wenn eine maschine gebaut
-                # werden soll
-                self.machine_menu = MachineMenu(conveyorInfo, self.level_info)
-                self.add(self.machine_menu)
+        if not any(clicked_any_objects):
+            new_machine_pos = get_tile_center(x, y)
+            self.machine_menu = MachineMenu(new_machine_pos, self.level_info)
+            self.add(self.machine_menu)
 
     def remove(self, obj):
         if isinstance(obj, Material) and obj.processed:

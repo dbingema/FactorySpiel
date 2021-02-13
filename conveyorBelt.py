@@ -6,6 +6,8 @@
 from actor import Actor
 from pyglet.image import load, ImageGrid, Animation
 
+import cocos
+
 
 class ConveyorBelt(Actor):
 

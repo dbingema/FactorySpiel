@@ -18,15 +18,14 @@ class MachineMenu(cocos.layer.Layer):
 
     is_event_handler = True
 
-    def __init__(self, conveyorInfo, levelInfo):
+    def __init__(self, pos, level_info):
 
         super().__init__()
-        self.conveyorInfo = conveyorInfo
-        self.levelInfo = levelInfo
+        self.pos = pos
+        self.level_info = level_info
 
         # Positionen
-        x1, y1, x2, y2 = self.conveyorInfo['Corners']
-        self.center_x, self.center_y = (x1+x2)/2, (y1+y2)/2
+        self.center_x, self.center_y = self.pos
         cancel = cocos.sprite.Sprite('cancel.png',
                                      position=(self.center_x, self.center_y),
                                      opacity=200)
@@ -41,12 +40,12 @@ class MachineMenu(cocos.layer.Layer):
         self.machineOptions = {"cancel": (self.center_x-w2, self.center_y-h2,
                                           self.center_x+w2, self.center_y+h2, 0, None)}
 
-        numMachines = len(self.levelInfo.machines)
-        menuRadius = 110
+        num_machines = len(self.level_info.machines)
+        menu_radius = 110
 
-        angleIncrease = 2*math.pi/numMachines
+        angle_increase = 2*math.pi/num_machines
 
-        for index, machine in enumerate(self.levelInfo.machines):
+        for index, machine in enumerate(self.level_info.machines):
             # liste enthaelt die images: machine = ein pfad und bild
             # auch fuer das Tool: ein bild
             imgage = machine['image']
@@ -56,8 +55,8 @@ class MachineMenu(cocos.layer.Layer):
             # bild hin malen
             # neue position
             # durch winkel und radius position rechnen
-            xi = self.center_x + menuRadius * math.cos(index * angleIncrease)
-            yi = self.center_y + menuRadius * math.sin(index * angleIncrease)
+            xi = self.center_x + menu_radius * math.cos(index * angle_increase)
+            yi = self.center_y + menu_radius * math.sin(index * angle_increase)
             # kleines bild hinzufuegen
             option_shadow = cocos.sprite.Sprite('img/machine_shadow.png',
                                                 (xi, yi), scale=0.5,
@@ -65,7 +64,7 @@ class MachineMenu(cocos.layer.Layer):
             self.add(option_shadow)
             option = cocos.sprite.Sprite(image, (xi, yi), scale=0.6)
             self.add(option)
-            # optin hinzufuegen zu liste mit file namen als key
+            # optoin hinzufuegen zu liste mit file namen als key
             w2, h2 = option.width/2, option.height/2
             self.machineOptions[imgage] = (xi-w2, yi-h2, xi+w2, yi+h2, machine['cost'], machine['tool'])
 
@@ -77,6 +76,6 @@ class MachineMenu(cocos.layer.Layer):
             if cocos.rect.Rect(x1, y1, x2-x1, y2-y1).contains(x, y):
                 if option != "cancel":
                     self.parent.create_machine(self.center_x, self.center_y,
-                                               self.conveyorInfo, option, cost, tool)
+                                               option, cost, tool)
 
         self.kill()
