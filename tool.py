@@ -16,17 +16,13 @@ class Tool(cocos.sprite.Sprite):
         seq = ImageGrid(load(imgage), 1, self.num_frames)
         return Animation.from_image_sequence(seq, delay, loop=False)
 
-    def __init__(self, x, y, orientation, target, machine, delay, image):
+    def __init__(self, x, y, target, machine, delay, image):
         # using universal delay calculate animation speed accordingly
         self.delay = delay / 2.38
         self.num_frames = 7
         self.target = target
         self.machine = machine
         animation = self.load_animation(image, self.delay)
-
-        # depending on direction, rotate image accordingly
-        if orientation == 'horizontal':
-            animation = animation.get_transform(rotate=90)
 
         # now create actual instance
         pos = eu.Vector2(x, y)

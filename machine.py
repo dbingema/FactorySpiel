@@ -3,6 +3,7 @@
 #
 
 import time
+import math
 
 from pyglet.image import load, ImageGrid, Animation
 import cocos
@@ -28,7 +29,8 @@ class Machine(Actor):
         # define collision box
         # increase size of collision box to hit sooner
         # when conveyor belt is faster
-        self.cshape.r = 0.25 / self.delay
+        # self.cshape.r = 0.25 / self.delay
+        self.cshape.r = 128
         self.target = None
 
         # define timer for cool down period
@@ -36,6 +38,7 @@ class Machine(Actor):
         self.cooldown = 2.0
         self.upgrade_cost = 10
         self.upgrade_level = 0
+        self.hit_distance = 80
 
         # starte druck aufbau
         self.reload_animation = None
@@ -47,16 +50,26 @@ class Machine(Actor):
         if self.target is not None:
             if not self.target.processed:
                 if time.perf_counter() > self.last_stamp + self.cooldown:
-                    self.parent.add(Tool(self.x, self.y, self.orientation,
-                                         self.target, self, self.delay, self.toolImage))
-                    # reset last stamp so dass er nicht drauf haut waerend es eine piston schon gibt
-                    self.last_stamp = time.perf_counter()
-                    self.target = None
+                    distance = math.sqrt((self.x - self.target.x)**2 + (self.y - self.target.y)**2)
+                    if distance < self.hit_distance:
+                        self.add(Tool(0, -32, self.target, self, self.delay, self.toolImage))
+                        # reset last stamp so dass er nicht drauf haut waerend es eine piston schon gibt
+                        self.last_stamp = time.perf_counter()
 
     def collide(self, material):
-        if self.can_hit(material):
+        if self.target is None:
             self.target = material
-            self.stamp()
+        else:
+            if self.target.processed:
+                self.target = material
+            else:
+                distance = math.sqrt((self.x - self.target.x) ** 2 + (self.y - self.target.y) ** 2)
+                if distance > self.cshape.r:
+                    self.target = material
+        x, y = self.target.x - self.x, self.target.y - self.y
+        angle = -math.atan2(y, x)
+        self.rotation = math.degrees(angle) - 90
+        self.stamp()
 
     def begin_reload(self):
         if self.reload_animation is not None:
@@ -67,6 +80,7 @@ class Machine(Actor):
         # punkte oben drauf legen
         self.reload_animation = cocos.sprite.Sprite(animation)
         self.add(self.reload_animation)
+        self.target = None
 
     def set_cooldown(self, val):
         self.cooldown = val
