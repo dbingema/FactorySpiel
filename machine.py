@@ -113,12 +113,7 @@ class Machine(Actor):
 
     def set_cooldown(self, val):
         self.cooldown = val
-        animation = self.load_animation('img/machineReload.png', self.cooldown / 5)
-        # wenn es eine animation schon gibt loeschen
-        if self.reload_animation is not None:
-            self.remove(self.reload_animation)
-        self.reload_animation = cocos.sprite.Sprite(animation)
-        self.add(self.reload_animation)
+        self.begin_reload()
 
     def upgrade(self):
         if self.upgrade_level == 0:
