@@ -41,23 +41,6 @@ class Machine(Actor):
         self.reload_animation = None
         self.begin_reload()
 
-    # make sure material is in a valid position
-    # (in front and not behind the machine)
-    def can_hit(self, material):
-        if self.conveyor_direction == 'up':
-            if material and material.y < self.y:
-                return True
-        if self.conveyor_direction == 'down':
-            if material and material.y > self.y:
-                return True
-        if self.conveyor_direction == 'right':
-            if material and material.x < self.x:
-                return True
-        if self.conveyor_direction == 'left':
-            if material and material.x > self.x:
-                return True
-        return False
-
     def stamp(self):
         # if collision then:
         # create piston

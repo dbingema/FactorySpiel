@@ -166,7 +166,7 @@ class GameLayer(cocos.layer.Layer):
         # wo hat man hin geclickt?
         # etwa auf eine Maschine? Oder ein Fliessband?
         # Dann nix tun
-        clicked_any_objects = [get_bounding_box(obj).contains(x, y) for obj in self.machine + self.conveyer_belts]
+        clicked_any_objects = [get_bounding_box(obj).contains(x, y) for obj in self.machines + self.conveyor_belts]
 
         if not any(clicked_any_objects):
             new_machine_pos = get_tile_center(x, y)
