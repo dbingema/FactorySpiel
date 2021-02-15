@@ -39,6 +39,7 @@ class Machine(Actor):
         self.upgrade_cost = 10
         self.upgrade_level = 0
         self.hit_distance = 80
+        self.stamping = False
 
         # starte druck aufbau
         self.reload_animation = None
@@ -54,7 +55,7 @@ class Machine(Actor):
                     if distance < self.hit_distance:
                         self.add(Tool(0, -32, self.target, self, self.delay, self.toolImage))
                         # reset last stamp so dass er nicht drauf haut waerend es eine piston schon gibt
-                        self.last_stamp = time.perf_counter()
+                        self.stamping = True
 
     def collide(self, material):
         if self.target is None:
@@ -66,12 +67,14 @@ class Machine(Actor):
                 distance = math.sqrt((self.x - self.target.x) ** 2 + (self.y - self.target.y) ** 2)
                 if distance > self.cshape.r:
                     self.target = material
-        x, y = self.target.x - self.x, self.target.y - self.y
-        angle = -math.atan2(y, x)
-        self.rotation = math.degrees(angle) - 90
-        self.stamp()
+        if not self.stamping:
+            x, y = self.target.x - self.x, self.target.y - self.y
+            angle = -math.atan2(y, x)
+            self.rotation = math.degrees(angle) - 95
+            self.stamp()
 
     def begin_reload(self):
+        self.stamping = False
         if self.reload_animation is not None:
             self.remove(self.reload_animation)
         self.last_stamp = time.perf_counter()

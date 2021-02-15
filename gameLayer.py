@@ -139,6 +139,8 @@ class GameLayer(cocos.layer.Layer):
 
         for machine in self.machines:
             material = next(self.coll_man.iter_colliding(machine), None)
+            materials = self.coll_man.iter_colliding(machine)
+            print(materials)
             if material is not None:
                 machine.collide(material)
 
