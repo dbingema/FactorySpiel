@@ -38,7 +38,6 @@ class Machine(Actor):
         self.cooldown = 2.0
         self.upgrade_cost = 10
         self.upgrade_level = 0
-        self.hit_distance = 80
         self.stamping = False
 
         # starte druck aufbau
@@ -51,11 +50,11 @@ class Machine(Actor):
         if self.target is not None:
             if not self.target.processed:
                 if time.perf_counter() > self.last_stamp + self.cooldown:
-                    distance = math.sqrt((self.x - self.target.x)**2 + (self.y - self.target.y)**2)
-                    if distance < self.hit_distance:
-                        self.add(Tool(0, -32, self.target, self, self.delay, self.toolImage))
-                        # reset last stamp so dass er nicht drauf haut waerend es eine piston schon gibt
-                        self.stamping = True
+                    # distance = math.sqrt((self.x - self.target.x)**2 + (self.y - self.target.y)**2)
+                    # if distance < self.hit_distance:
+                    self.add(Tool(0, -32, self.target, self, self.delay, self.toolImage))
+                    # reset last stamp so dass er nicht drauf haut waerend es eine piston schon gibt
+                    self.stamping = True
 
     def collide(self, material):
         if self.target is None:
@@ -67,6 +66,7 @@ class Machine(Actor):
                 distance = math.sqrt((self.x - self.target.x) ** 2 + (self.y - self.target.y) ** 2)
                 if distance > self.cshape.r:
                     self.target = material
+
         if not self.stamping:
             x, y = self.target.x - self.x, self.target.y - self.y
             angle = -math.atan2(y, x)
